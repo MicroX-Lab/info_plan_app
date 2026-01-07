@@ -4,6 +4,12 @@ import 'package:go_router/go_router.dart';
 import '../../config/constants.dart';
 import '../../widgets/pill_tag.dart';
 
+void _showComingSoon(BuildContext context, String feature) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('$feature 功能即将开放')),
+  );
+}
+
 class ContentImportPage extends StatefulWidget {
   const ContentImportPage({super.key});
 
@@ -95,6 +101,11 @@ class _InputField extends StatelessWidget {
   final String hint;
   final IconData? suffixIcon;
   final int maxLines;
+  void _showAction(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('功能即将支持：$hint')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +129,7 @@ class _InputField extends StatelessWidget {
           ),
           if (suffixIcon != null)
             IconButton(
-              onPressed: () {},
+              onPressed: () => _showAction(context),
               icon: Icon(suffixIcon, color: AppColors.textSecondary),
             ),
         ],
@@ -135,9 +146,21 @@ class _XhsImport extends StatelessWidget {
     return ListView(
       children: [
         const _SectionTitle('添加设置'),
-        _ListItem(title: '账户授权', trailing: '选择账号'),
-        _ListItem(title: '导入收藏夹', trailing: '选择收藏夹'),
-        _ListItem(title: '内容发布时间', trailing: '选择时间范围'),
+        _ListItem(
+          title: '账户授权',
+          trailing: '选择账号',
+          onTap: () => _showComingSoon(context, '账户授权'),
+        ),
+        _ListItem(
+          title: '导入收藏夹',
+          trailing: '选择收藏夹',
+          onTap: () => _showComingSoon(context, '导入收藏夹'),
+        ),
+        _ListItem(
+          title: '内容发布时间',
+          trailing: '选择时间范围',
+          onTap: () => _showComingSoon(context, '内容发布时间'),
+        ),
         const _SectionTitle('添加内容'),
         Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
@@ -170,7 +193,11 @@ class _OfficialImport extends StatelessWidget {
     return ListView(
       children: [
         const _SectionTitle('添加设置'),
-        _ListItem(title: '内容发布时间', trailing: '选择时间范围'),
+        _ListItem(
+          title: '内容发布时间',
+          trailing: '选择时间范围',
+          onTap: () => _showComingSoon(context, '内容发布时间'),
+        ),
         const _SectionTitle('添加内容'),
         Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
@@ -223,23 +250,27 @@ class _CustomImport extends StatelessWidget {
 }
 
 class _ListItem extends StatelessWidget {
-  const _ListItem({required this.title, required this.trailing});
+  const _ListItem({required this.title, required this.trailing, this.onTap});
   final String title;
   final String trailing;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.md),
-      child: Row(
-        children: [
-          Text(title, style: const TextStyle(fontSize: 16, color: AppColors.textPrimary)),
-          const Spacer(),
-          Text(trailing, style: const TextStyle(color: AppColors.textSecondary)),
-          const SizedBox(width: 6),
-          const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary),
-        ],
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.md),
+        child: Row(
+          children: [
+            Text(title, style: const TextStyle(fontSize: 16, color: AppColors.textPrimary)),
+            const Spacer(),
+            Text(trailing, style: const TextStyle(color: AppColors.textSecondary)),
+            const SizedBox(width: 6),
+            const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary),
+          ],
+        ),
       ),
     );
   }

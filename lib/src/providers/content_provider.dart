@@ -22,7 +22,8 @@ class ContentProvider extends ChangeNotifier {
     if (cached.isNotEmpty) {
       _items = cached;
     } else {
-      _items = _service.mockContents;
+      // Use a fixed set of mock cards so the browse page can be swiped immediately.
+      _items = _service.mockContents.take(5).toList();
       await _store.saveContents(_items);
     }
     notifyListeners();

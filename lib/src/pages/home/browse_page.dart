@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tilt/flutter_tilt.dart';
 import 'package:provider/provider.dart';
 
 import '../../config/constants.dart';
@@ -51,38 +50,39 @@ class _BrowsePageState extends State<BrowsePage> {
         Expanded(
           child: PageView.builder(
             controller: _controller,
+            physics: const PageScrollPhysics(),
             onPageChanged: layout.setPage,
             itemCount: contents.length,
             itemBuilder: (context, index) {
               final content = contents[index];
               final flipped = _flipped[content.id] ?? false;
               return GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () => setState(() => _flipped[content.id] = !flipped),
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                  child: Tilt(
-                    borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (child, animation) {
-                        final rotate = Tween(begin: flipped ? 1.0 : -1.0, end: 0.0)
-                            .animate(animation);
-                        return AnimatedBuilder(
-                          animation: rotate,
-                          builder: (context, _) {
-                            final angle = rotate.value;
-                            return Transform(
-                              transform: Matrix4.rotationY(angle),
-                              alignment: Alignment.center,
-                              child: child,
-                            );
-                          },
-                        );
-                      },
-                      child: flipped
-                          ? _ContentBackCard(content: content, key: ValueKey('${content.id}-back'))
-                          : _ContentFrontCard(content: content, key: ValueKey('${content.id}-front')),
-                    ),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    transitionBuilder: (child, animation) {
+                      final rotate =
+                          Tween(begin: flipped ? 1.0 : -1.0, end: 0.0).animate(animation);
+                      return AnimatedBuilder(
+                        animation: rotate,
+                        builder: (context, _) {
+                          final angle = rotate.value;
+                          return Transform(
+                            transform: Matrix4.rotationY(angle),
+                            alignment: Alignment.center,
+                            child: child,
+                          );
+                        },
+                      );
+                    },
+                    child: flipped
+                        ? _ContentBackCard(content: content, key: ValueKey('${content.id}-back'))
+                        : _ContentFrontCard(content: content, key: ValueKey('${content.id}-front')),
                   ),
                 ),
               );
